@@ -1,0 +1,47 @@
+---
+title: "C4 Level 2 – Container Diagram (Release 1)"
+date: 2026-10-09
+author: Kiv Sovannlyda (Member B)
+---
+
+```mermaid
+C4Container
+    title Angkor Mart Sales Reporting System – Container Diagram (Release 1)
+
+    Person(analyst, "Analyst / Finance Director", "Queries monthly revenue reports")
+    Person(branchMgr, "Branch Manager", "Views per-branch report")
+
+    System_Boundary(angkorMart, "Angkor Mart Reporting System") {
+        Container(csvLanding, "CSV Landing Zone", "File System / NFS Share",
+            "Receives daily branch export files via SFTP;\nnamed BRANCH-yyyy-MM-dd.csv")
+
+        Container(batchEngine, "Batch Report Engine", "Java 25 / Maven JAR",
+            "MonthLoader reads CSV files;\nCsvTransactionParser validates rows;\nApp aggregates and renders the report")
+
+        Container(reportStore, "Report Store", "File System / Object Store",
+            "Stores rendered monthly report files\n(TXT, HTML, CSV formats)")
+
+        Container(webUI, "Report Web UI", "HTTPS Web Server",
+            "Serves HTML reports;\nenforces branch-level access control")
+
+        Container(desktopViewer, "JavaFX Desktop Viewer", "JavaFX Application",
+            "Offline report viewer for branch managers\nwithout internet access")
+    }
+
+    System_Ext(posPNH, "POS System – PNH", "Phnom Penh branch POS terminal")
+    System_Ext(posREP, "POS System – REP", "Siem Reap branch POS terminal")
+    System_Ext(posBTB, "POS System – BTB", "Battambang branch POS terminal")
+    System_Ext(smtp, "SMTP Mail Server", "Sends report-ready notification emails")
+
+    Rel(posPNH,       csvLanding,   "Uploads daily CSV",      "SFTP")
+    Rel(posREP,       csvLanding,   "Uploads daily CSV",      "SFTP")
+    Rel(posBTB,       csvLanding,   "Uploads daily CSV",      "SFTP")
+    Rel(batchEngine,  csvLanding,   "Reads *.csv files",      "file system")
+    Rel(batchEngine,  reportStore,  "Writes rendered report", "file system")
+    Rel(batchEngine,  smtp,         "Sends completion email", "SMTP")
+    Rel(webUI,        reportStore,  "Reads report files",     "file system")
+    Rel(desktopViewer, reportStore, "Reads report files",     "file system")
+    Rel(analyst,      webUI,        "Views chain report",     "HTTPS")
+    Rel(branchMgr,    webUI,        "Views branch report",    "HTTPS")
+    Rel(branchMgr,    desktopViewer, "Offline access",        "in-process call")
+```
