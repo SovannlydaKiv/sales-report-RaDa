@@ -20,3 +20,6 @@ We will build Release 1 as a **modular monolith batch application** executing in
 - **− (QA-3)** An unhandled out-of-memory error or JVM crash terminates the entire batch job rather than isolating failure to a single stage.
 
 Revisit when: Monthly transaction volume exceeds 10,000,000 rows or external systems require real-time RPC/REST queries against live aggregations.
+
+## Decision 
+- The core model package maintains zero outgoing project dependencies (I = 0) so future desktop and web UI containers can reuse it directly.
