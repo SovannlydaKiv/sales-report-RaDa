@@ -7,10 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Lab-01 sample data: java tools/SampleData.java [month] [days] [rows] [seed]
- * Writes data/<month>/<BRANCH>-<date>.csv with two deliberately bad rows.
- */
 void main(String[] args) throws IOException {
     var month = YearMonth.parse(args.length > 0 ? args[0] : "2026-09");
     int days = args.length > 1 ? Integer.parseInt(args[1]) : 5;
